@@ -1,0 +1,83 @@
+template<typename T>//这个应用场景下，T多为函数
+class BlockQueue{
+private:
+    mutex mtx;
+    queue<T>Qu;
+    condition_variable cv;
+    bool closed;
+public:
+    //推进队列并且唤醒线程
+    bool push(T value){
+        lock_guard<mutex>lock(mtx);//凡事先上锁
+        if(closed) return false;
+        Qu.push(move(value));
+        //唤醒队列
+        cv.notify_one();
+        return true;
+    }
+    
+    bool pop(T& value){
+        unique_lock<mutex>lock(mtx);
+        //对引用进行修改，删除队列，
+        cv.wait(lock,[this]{
+            //跳出等待的条件，为1则跳出
+            return closed || !Qu.empty();
+        });
+        if(Qu.empty()){
+            return false;
+        }
+        value = Qu.front();//取出任务队列里面的任务，此时由于是引用，外部任务已经被修改，外部执行即可
+        Qu.pop();
+        if(closed) return false;
+        return true;
+    }
+
+    void close(){
+        {
+            lock_guard<mutex>lock(mtx);//凡事先上锁
+            closed = true;
+        }
+        cv.notify_all();
+    }
+
+    bool empty(){
+        lock_guard<mutex>lock(mtx);//凡事先上锁
+        return Qu.empty();
+    }
+};
+
+
+class ThreadPool{
+private:
+    BlockQueue<Task>tasks;
+    vector<thread>workers;
+public:
+    
+    using Task = function<void()>;//新的type类型为Task，对于void()类型的函数，交给线程执行
+    explicit ThreadPool(size_t thread_count){
+        for(std::size_t i = 0; i < thread_count; ++i){
+            workers.emplace_back([this]{
+                worker_loop();
+            });
+        }
+    }
+    ~ThreadPool(){
+        tasks.close();
+        for(auto& worker : workers){
+            if(worker.joinable()){
+                worker.join();
+            }
+        }
+    }
+
+    void worker_loop(){
+        Task task;
+        while(tasks.pop(task)){
+            task();
+        }
+    }
+
+    bool submit(Task task){
+        return tasks.push(std::move(task));
+    }
+};

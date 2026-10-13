@@ -1,0 +1,6 @@
+socket() 创建的不是“IP+端口”，而是一个由内核维护的通信对象。这个对象会保存很多状态，例如本地 IP、本地端口、对端 IP、对端端口、发送缓冲区、接收缓冲区、TCP 状态、序列号、ACK、重传信息等。程序本身不会直接拿到这个内核对象，而是拿到一个整数 fd，例如 listen_fd = 3，之后通过这个 fd 操作对应的 socket。
+对于 TCP，通常每一条已经建立的连接都有自己独立的 connected socket，所以一个进程完全可以同时拥有很多 socket。例如一个服务器可能有 listen_fd=3，同时还有 conn_fd=4/5/6...，分别对应不同客户端。监听 socket 比较特殊，它不是对应某个具体客户端，而是负责接收新的连接。
+sockaddr_in server_addr{}; 表示创建一个 IPv4 地址结构，并通过 {} 把它初始化为 0。里面常用三个字段：sin_family = AF_INET 表示 IPv4；sin_port = htons(8888) 表示端口 8888；sin_addr.s_addr = htonl(INADDR_ANY) 表示绑定本机所有 IPv4 地址。htons() 和 htonl() 都是把主机中的整数转换成网络字节序，其中 htons 用于 16 位数据，所以端口号用它；htonl 用于 32 位数据，所以 IPv4 整数地址会用它。
+bind() 的作用是把一个 socket 显式绑定到本机的 IP+端口，例如 0.0.0.0:8888。它的三个参数分别可以理解为：listen_fd 表示“给哪个 socket 绑定”；reinterpret_cast<sockaddr*>(&server_addr) 表示“绑定到哪个地址”；sizeof(server_addr) 表示“这个地址结构有多大”。这里的 reinterpret_cast 并没有修改 server_addr，只是把同一块内存的指针从 sockaddr_in* 转换成 sockaddr*，以适配 socket API 的统一接口。
+需要注意，socket() 创建以后不一定必须自己 bind()。服务端通常需要固定端口，所以一般会 socket → bind → listen；客户端通常只需要 socket → connect，本地 IP 和临时端口可以由内核自动分配。
+listen() 的原型是 int listen(int sockfd, int backlog);。第一个参数是要进入监听状态的 socket，第二个参数 backlog 表示等待程序 accept() 的连接可以在内核中排队到什么规模。它不是“服务器最多只能有多少客户端”，已经 accept() 成功的连接不算在这个等待队列里。可以把 bind() 和 listen() 简单记成：bind() 决定“在哪里等”，listen() 决定“开始等连接”。
