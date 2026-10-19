@@ -12,6 +12,7 @@ ubuntu\@wzt:\~$ pmap 596allocator 的空闲块管理
 这里意义是heap的大小为132K
 
 然后执行
+```cpp
 int main()
 {
     std::cout << "before malloc" << std::endl;
@@ -31,7 +32,7 @@ allocator 的空闲块管理
 
     return 0;
 }
-
+```
 通过strace -e trace=brk,mmap,munmap ./build/malloc_trace观察内存过程
 
 得到的核心信息为：
