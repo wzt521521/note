@@ -1,10 +1,10 @@
 # 自定义 Reactor 项目 MySQL 与 C++ 数据库开发学习计划清单
 
 > 文档版本：V2.0（待审核）  
-> 修订日期：2026-10-18  
+> 修订日期：2026-10-27  
 > 当前项目：`module5/自定义reactor实现`  
 > 学习方向：C++ 服务端、系统编程与数据库  
-> 文档性质：学习与实现计划，不代表已经修改源码或安装环境
+> 文档性质：学习与实现计划；勾选项和执行记录按实际进度标注
 
 ## 一、V2.0 修订说明
 
@@ -36,11 +36,11 @@ V2.0 调整为：
 
 独立于 Reactor 的命令行数据库客户端，用于学习：
 
-- [ ] MySQL 客户端库初始化、连接和关闭。
-- [ ] 普通 SQL 和预处理语句。
-- [ ] 参数绑定、结果绑定和类型转换。
-- [ ] RAII、错误处理和资源所有权。
-- [ ] 缓冲结果与流式结果读取。
+- [x] MySQL 客户端库初始化、连接和关闭。
+- [x] 普通 SQL 和预处理语句。
+- [x] 参数绑定、结果绑定和类型转换。
+- [x] RAII、错误处理和资源所有权。
+- [x] 缓冲结果与流式结果读取。
 
 ### 2.2 `reactor_db_server`
 
@@ -234,11 +234,11 @@ DB Worker Thread[0..M-1]
 
 ### 实现成果
 
-- [ ] 增加 CMake 构建服务端、客户端和测试程序。
-- [ ] 保留现有 `[total_len | cmd | body]` 帧结构。
-- [ ] 为 Buffer、Packet 和 Dispatcher 建立测试。
+- [x] 增加 CMake 构建服务端、客户端和测试程序。
+- [x] 保留现有 `[total_len | cmd | body]` 帧结构。
+- [x] 为 Buffer、Packet 和 Dispatcher 建立测试。
 - [ ] 测试半包、粘包、最大包、非法包和部分写。
-- [ ] 增加多客户端并发 Echo 测试。
+- [x] 增加多客户端并发 Echo 测试。
 - [ ] 增加线程归属断言或等价检查。
 - [ ] 增加服务端优雅退出入口。
 - [ ] 建立 Debug、ASan、UBSan 构建方式。
@@ -247,104 +247,115 @@ DB Worker Thread[0..M-1]
 
 - [ ] epoll LT 行为和 eventfd 唤醒。
 - [ ] one loop per thread。
-- [ ] TCP 字节流与应用层帧。
-- [ ] 网络字节序和整数边界。
+- [x] TCP 字节流与应用层帧。
+- [x] 网络字节序和整数边界。
 - [ ] shared_ptr、weak_ptr 和生命周期。
-- [ ] CMake、CTest 和 Sanitizer。
+- [x] CMake、CTest 和 Sanitizer。
 
 ### 验收标准
 
 - [ ] 一条命令完成配置、构建和测试。
-- [ ] 非法客户端不会影响其他连接。
-- [ ] 多客户端响应不串包。
-- [ ] ASan、UBSan 不报告确定性错误。
+- [x] 非法客户端不会影响其他连接。
+- [x] 多客户端响应不串包。
+- [x] ASan、UBSan 不报告确定性错误。
 - [ ] 退出时监听 fd、连接、timerfd、eventfd 和线程均能回收。
-- [ ] 不修改协议为 JSON，不提前加入数据库逻辑。
+- [x] 不修改协议为 JSON，不提前加入数据库逻辑。
 
 ## 第 1 轮：MySQL 安装、命令行与 SQL 基础
 
 ### 实现成果
 
-- [ ] 亲自在 WSL/Linux 安装并启动 MySQL。
-- [ ] 找到服务、配置、日志、数据目录、端口和 Socket。
-- [ ] 创建实验数据库。
-- [ ] 创建管理员实验账号和最小权限应用账号。
-- [ ] 建立 `sql_labs/01_basics` 实验脚本。
-- [ ] 使用 MySQL CLI 完成全部基础 SQL，不写 C++。
+- [x] 确认 WSL/Linux 已安装 MySQL 并完成启动验证（环境原有，无需重装）。
+- [x] 找到服务、配置、日志、数据目录、端口和 Socket。
+- [x] 创建实验数据库。
+- [x] 创建管理员实验账号和最小权限应用账号。
+- [x] 建立 `sql_labs/01_basics` 实验脚本。
+- [x] 使用 MySQL CLI 完成全部基础 SQL，不写 C++。
 
 ### 数据库知识
 
-- [ ] Server、Client、Instance、Database、Table、Connection 的关系。
-- [ ] DDL、DML、DQL、DCL、TCL。
-- [ ] `CREATE`、`ALTER`、`DROP`。
-- [ ] `INSERT`、`UPDATE`、`DELETE`、`SELECT`。
-- [ ] 主键、唯一约束、非空约束、外键和默认值。
-- [ ] 整数、定点数、浮点数、字符串、时间、二进制类型。
-- [ ] NULL 的三值逻辑。
-- [ ] 字符集和排序规则。
-- [ ] 自增值、默认时间和受影响行数。
-- [ ] 一对一、一对多、多对多和基本规范化。
-- [ ] JOIN、子查询、聚合、CTE 和窗口函数基础。
+- [x] Server、Client、Instance、Database、Table、Connection 的关系。
+- [x] DDL、DML、DQL、DCL、TCL。
+- [x] `CREATE`、`ALTER`、`DROP`。
+- [x] `INSERT`、`UPDATE`、`DELETE`、`SELECT`。
+- [x] 主键、唯一约束、非空约束、外键和默认值。
+- [x] 整数、定点数、浮点数、字符串、时间、二进制类型。
+- [x] NULL 的三值逻辑。
+- [x] 字符集和排序规则。
+- [x] 自增值、默认时间和受影响行数。
+- [x] 一对一、一对多、多对多和基本规范化。
+- [x] JOIN、子查询、聚合、CTE 和窗口函数基础。
 
 ### Linux 附加知识
 
-- [ ] systemctl 或当前发行版对应的服务管理方式。
-- [ ] `ss` 查看监听端口。
-- [ ] TCP 连接与 Unix Socket 连接的区别。
-- [ ] 配置文件搜索顺序和文件权限。
-- [ ] 通过错误日志定位启动失败。
+- [x] systemctl 或当前发行版对应的服务管理方式。
+- [x] `ss` 查看监听端口。
+- [x] TCP 连接与 Unix Socket 连接的区别。
+- [x] 配置文件搜索顺序和文件权限。
+- [x] 通过错误日志定位启动失败。
 
 ### 验收标准
 
-- [ ] 能分别使用管理员账号和应用账号登录。
-- [ ] 能解释应用账号为什么不能执行管理操作。
-- [ ] 能从空数据库执行基础实验脚本。
-- [ ] 能说明所用字段类型和约束的原因。
-- [ ] 能区分数据库服务未启动、认证失败和数据库不存在三类错误。
+- [x] 能分别使用管理员账号和应用账号登录。
+- [x] 能解释应用账号为什么不能执行管理操作。
+- [x] 能从空数据库执行基础实验脚本。
+- [x] 能说明所用字段类型和约束的原因。
+- [x] 能区分数据库服务未启动、认证失败和数据库不存在三类错误。
 
 ## 第 2 轮：独立 `db_cli` 与 MySQL C API
 
+> 执行状态（2026-10-27）：独立、单线程的个人学习 Demo 已收尾。以下勾选按实际实现和学习情况记录；原计划中覆盖更宽的条目继续保留未勾选。
+
 ### 实现成果
 
-- [ ] 新建独立 `db_cli` 可执行程序，不依赖 Reactor。
-- [ ] 完成连接、查询、结果遍历和关闭。
+- [x] 新建独立 `db_cli` 可执行程序，不依赖 Reactor。
+- [x] 完成连接、查询、结果遍历和关闭。
 - [ ] 完成预处理 INSERT、UPDATE 和 SELECT。
-- [ ] 封装 move-only `MySqlConnection`。
-- [ ] 封装 `PreparedStatement` 和结果资源。
-- [ ] 建立 `DbError`，保存错误码、SQLSTATE 和安全错误描述。
-- [ ] 为 RAII 和错误路径编写集成测试。
+- [x] 封装 move-only `MySqlConnection`。
+- [x] 封装 `PreparedStatement` 和结果资源。
+- [x] 建立 `DbError`，保存错误码、SQLSTATE 和安全错误描述。
+- [x] 为 RAII 和错误路径编写集成测试。
 
 ### MySQL C API 学习
 
-- [ ] 库级和连接级初始化、连接和清理生命周期。
-- [ ] `mysql_real_connect` 的关键参数。
-- [ ] `mysql_real_query` 与文本协议。
-- [ ] `mysql_store_result` 与 `mysql_use_result`。
-- [ ] 结果集行、列和 NULL 表示。
-- [ ] `mysql_stmt_init/prepare/bind/execute/fetch` 生命周期。
-- [ ] `MYSQL_BIND` 输入和输出缓冲区生命周期。
-- [ ] 连接错误与语句错误的区别。
-- [ ] 自动重连的风险和会话状态变化。
+- [x] 库级和连接级初始化、连接和清理生命周期。
+- [x] `mysql_real_connect` 的关键参数。
+- [x] `mysql_real_query` 与文本协议。
+- [x] `mysql_store_result` 与 `mysql_use_result`。
+- [x] 结果集行、列和 NULL 表示。
+- [x] `mysql_stmt_init/prepare/bind/execute/fetch` 生命周期。
+- [x] `MYSQL_BIND` 输入和输出缓冲区生命周期。
+- [x] 连接错误与语句错误的区别。
+- [x] 自动重连的风险和会话状态变化。
 
 ### C++ 学习
 
-- [ ] C 资源的 RAII 封装。
-- [ ] 自定义删除器。
-- [ ] 禁止复制、允许移动。
-- [ ] 析构函数不抛异常。
+- [x] C 资源的 RAII 封装。
+- [x] 自定义删除器。
+- [x] 禁止复制、允许移动。
+- [x] 析构函数不抛异常。
 - [ ] string、string_view 与底层缓冲区生命周期。
-- [ ] SQL NULL 映射为 `std::optional`。
+- [x] SQL NULL 映射为 `std::optional`。
 - [ ] 无符号整数、范围检查和窄化转换。
-- [ ] DECIMAL 不直接当作 double 处理。
-- [ ] BLOB 与文本数据的区别。
+- [x] DECIMAL 不直接当作 double 处理。
+- [x] BLOB 与文本数据的区别。
 
 ### 验收标准
 
-- [ ] 连接失败、SQL 错误、约束冲突和结果为空均有测试。
+- [x] 连接失败、SQL 错误、约束冲突和结果为空均有测试。
 - [ ] 任意提前返回路径都不会泄漏连接、语句或结果集。
-- [ ] 用户输入不通过字符串拼接进入 SQL。
-- [ ] 能解释缓冲结果和流式结果的内存及连接占用差异。
-- [ ] ASan、UBSan 下集成测试通过。
+- [x] 用户输入不通过字符串拼接进入 SQL。
+- [x] 能解释缓冲结果和流式结果的内存及连接占用差异。
+- [x] ASan、UBSan 下集成测试通过。
+
+### 第二轮执行记录
+
+- `CMakeLists.txt` 构建独立的 `db_cli`，使用 `libmysqlclient`；未接入 Reactor、多线程或连接池，原二进制协议未改。
+- `db_cli/main.cpp` 演示普通 SELECT 的缓冲与流式读取、列元数据、NULL/空字符串、DECIMAL 和 BLOB；预处理 SELECT 在同一语句上分别使用参数 2 和 99，验证有结果与空结果。
+- 预处理 INSERT 演示插入后显式回滚；预处理 UPDATE 演示约束冲突、错误读取和回滚。原清单“完成预处理 INSERT、UPDATE 和 SELECT”未勾选，因为没有成功 UPDATE 的演示。
+- `MySqlLibrary`、`MySqlConnection`、`MySqlStatement` 管理客户端库、连接和语句；`MYSQL_RES*` 用 `unique_ptr` 自定义删除器管理，`MySqlTransaction` 在作用域退出时尝试回滚并恢复自动提交。实际类名是 `MySqlStatement`，对应上方计划中的 `PreparedStatement`。
+- `tests/db_cli_integration.py` 覆盖错误密码、预期 SQL 错误、空结果、BLOB 和执行期 CHECK 冲突。此前验收记录：Debug CTest 3/3 通过；ASan/UBSan 下 `db_cli_integration` 1/1 通过。测试只覆盖代表性路径，未证明“任意提前返回路径”都无泄漏，因此该项未勾选。
+- 自动重连的会话状态风险已做概念梳理，未进行强制断线实验。`string_view` 与底层缓冲区生命周期、窄化转换未作为独立练习验收，保持未勾选。
 
 ## 第 3 轮：Reactor 接入 DB Worker 与连接池
 
