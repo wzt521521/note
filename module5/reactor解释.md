@@ -56,7 +56,7 @@ baseLoop.Loops();开始等待epoll
 
 假设新客户端申请连接:
 此时baseloop的loop函数中正在执行，int n = epoll_wait(epollfd, vecOfevent.data(),static_cast<int>(vecOfevent.size()), -1);
-监听到了新的连接，返回n，从baseloop的事件数组里面取出来事件，找到事件对应的channel，然后运行acceptor的handleread，拿出连接后交付上层回调函数，上层回调函数位于TcpServer::newConnection，此时就用到了多线程，先取出一个创建好的线程的eventloop，然后通过map查找对应的上下文空间，对应的上下文空间里面就有计时器，管理连接的容器等等。此时新连接仍然没有被放到此线程对应的epoll实例里面，通过ioLoop->queueInLoop注入lambda函数，来让这个线程自己执行任务，让线程自己在读取任务的时候执行任务，任务的内容就是lambda函数体的内容，大概就是创建tcpconnection，并且注入各类回调，创建完成后调用conn->connectionSuccess();conn->connectionSuccess();内部调用loop_->updateChannel(&ch);让线程自己的loop进行创建新连接的事件epoll注册。此时就算这个线程成功的执行了任务队列里面的任务，并且成功了管理了这个新连接，负责这个连接后面的IO
+监听到了新的连接，返回n，从baseloop的事件数组里面取出来事件，找到事件对应的channel，然后运行acceptor的handleread，拿出连接后交付上层回调函数，上层回调函数位于TcpServer::newConnection，此时就用到了多线程，先取出一个创建好的线程的eventloop，然后通过map查找对应的上下文空间，对应的上下文空间里面就有计时器，管理连接的容器等等。此时新连接仍然没有被放到此线程对应的epoll实例里面，（关键部分！）通过ioLoop->queueInLoop注入lambda函数，来让这个线程自己执行任务，让线程自己在读取任务的时候执行任务，任务的内容就是lambda函数体的内容，大概就是创建tcpconnection，并且注入各类回调，创建完成后调用conn->connectionSuccess();conn->connectionSuccess();内部调用loop_->updateChannel(&ch);让线程自己的loop进行创建新连接的事件epoll注册。此时就算这个线程成功的执行了任务队列里面的任务，并且成功了管理了这个新连接，负责这个连接后面的IO
 
 现在假设这个连接开始传输数据：
 数据到达对应的注册在epoll中的实例，会唤醒对应的loop，相当于唤醒对应的线程，线程会执行处理，此时与单线程模型区别不大
