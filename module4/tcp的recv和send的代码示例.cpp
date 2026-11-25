@@ -1,3 +1,51 @@
+
+class Solution {
+public:
+    void search(const vector<int>& nums, int k, int start,
+                int& maxVal, int& count) {
+        maxVal = INT_MIN;
+        count = 0;
+
+        for (int i = start; i < start + k; i++) {
+            if (nums[i] > maxVal) {
+                maxVal = nums[i];
+                count = 1;
+            } else if (nums[i] == maxVal) {
+                count++;
+            }
+        }
+    }
+
+    vector<int> maxSlidingWindow(vector<int>& nums, int k) {
+        vector<int> res;
+        int maxVal, count;
+
+        search(nums, k, 0, maxVal, count);
+
+        for (int left = 0, right = k; right < nums.size(); left++, right++) {
+            res.push_back(maxVal);
+
+            // 移出左端元素
+            if (nums[left] == maxVal)
+                count--;
+
+            // 加入右端元素
+            if (nums[right] > maxVal) {
+                maxVal = nums[right];
+                count = 1;
+            } else if (nums[right] == maxVal) {
+                count++;
+            }
+
+            // 当前最大值全部移出，重新查找
+            if (count == 0)
+                search(nums, k, left + 1, maxVal, count);
+        }
+
+        res.push_back(maxVal);
+        return res;
+    }
+};
 // 标准输入输出流库，用于控制台打印运行日志与状态信息
 #include <iostream>
 // POSIX 标准系统调用头文件，提供 close() 等文件描述符操作接口

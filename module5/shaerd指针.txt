@@ -1,0 +1,21 @@
+shared指针本身存在栈上，例如：
+shared_ptr<A>p1=make_shared<A>();
+则p1存在栈上，并且p1指向两块堆内存，分布为控制块和对象地址。
+
+控制块里面有强引用计数和弱引用计数，当强引用计数归0时，释放对象地址，但是控制块占用的堆内存还存在，只有当强引用和弱引用同时归0时，控制块占用的堆内存才会释放
+
+针对weak_ptr
+weak_ptr<A>p2=p1;
+则弱引用+1
+{
+    auto p3=p2.lock();
+    if(!p3)
+    {
+        ...
+    }
+    ...
+}
+
+假如用unique_ptr
+unique_ptr<A>p4=make_unique<A>();
+auto p5=move(p4);
